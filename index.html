@@ -1,0 +1,2060 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3C Pizza Time | Karor Lal Esan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=DM+Sans:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#E31837",
+              secondary: "#FFD700",
+              dark: "#1A1A1A",
+              darker: "#0D0D0D",
+              card: "#252525",
+              muted: "#888888",
+            },
+            fontFamily: {
+              display: ["Bebas Neue", "sans-serif"],
+              body: ["DM Sans", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      :root {
+        --primary: #e31837;
+        --secondary: #ffd700;
+        --dark: #1a1a1a;
+        --darker: #0d0d0d;
+        --card: #252525;
+        --muted: #888888;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--darker);
+        color: #fff;
+        overflow-x: hidden;
+      }
+
+      /* Loading Screen */
+      .loader {
+        position: fixed;
+        inset: 0;
+        background: var(--darker);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.5s, visibility 0.5s;
+      }
+
+      .loader.hidden {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .loader-content {
+        text-align: center;
+      }
+
+      .pizza-spinner {
+        width: 80px;
+        height: 80px;
+        border: 4px solid var(--primary);
+        border-top-color: var(--secondary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Navigation */
+      .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: rgba(13, 13, 13, 0.95);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s;
+      }
+
+      .nav.scrolled {
+        background: rgba(13, 13, 13, 0.98);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+      }
+
+      .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .logo {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 1.8rem;
+        letter-spacing: 2px;
+        color: #fff;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .logo span {
+        color: var(--primary);
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 40px;
+      }
+
+      .nav-links a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: color 0.3s;
+        position: relative;
+      }
+
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--primary);
+        transition: width 0.3s;
+      }
+
+      .nav-links a:hover {
+        color: var(--primary);
+      }
+
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+
+      .cart-btn {
+        background: var(--primary);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 50px;
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s;
+        position: relative;
+      }
+
+      .cart-btn:hover {
+        background: #ff2a4a;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(227, 24, 55, 0.4);
+      }
+
+      .cart-count {
+        background: var(--secondary);
+        color: var(--dark);
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        font-size: 0.75rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: -5px;
+        right: -5px;
+      }
+
+      .mobile-toggle {
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        cursor: pointer;
+        padding: 5px;
+      }
+
+      .mobile-toggle span {
+        width: 25px;
+        height: 3px;
+        background: #fff;
+        border-radius: 2px;
+        transition: all 0.3s;
+      }
+
+      /* Hero Section */
+      .hero {
+        min-height: 100vh;
+        position: relative;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+      }
+
+      .hero-bg {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse at 20% 50%, rgba(227, 24, 55, 0.15) 0%, transparent 50%),
+          radial-gradient(ellipse at 80% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 40%),
+          radial-gradient(ellipse at 50% 80%, rgba(227, 24, 55, 0.1) 0%, transparent 40%),
+          linear-gradient(180deg, var(--darker) 0%, var(--dark) 100%);
+      }
+
+      .hero-pattern {
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.03) 0%, transparent 40%),
+          radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.02) 0%, transparent 30%);
+      }
+
+      .floating-pizza {
+        position: absolute;
+        font-size: 200px;
+        opacity: 0.05;
+        animation: float 20s ease-in-out infinite;
+      }
+
+      .floating-pizza:nth-child(1) {
+        top: 10%;
+        left: 5%;
+        animation-delay: 0s;
+      }
+      .floating-pizza:nth-child(2) {
+        top: 60%;
+        right: 10%;
+        animation-delay: -5s;
+      }
+      .floating-pizza:nth-child(3) {
+        bottom: 20%;
+        left: 60%;
+        animation-delay: -10s;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-30px) rotate(10deg);
+        }
+      }
+
+      .hero-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 120px 20px 80px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero-content {
+        animation: slideUp 1s ease-out;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(40px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(227, 24, 55, 0.2);
+        border: 1px solid rgba(227, 24, 55, 0.3);
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        margin-bottom: 20px;
+        animation: slideUp 1s ease-out 0.1s both;
+      }
+
+      .hero-badge .dot {
+        width: 8px;
+        height: 8px;
+        background: #4ade80;
+        border-radius: 50%;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.5;
+          transform: scale(1.2);
+        }
+      }
+
+      .hero-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: clamp(3.5rem, 8vw, 6rem);
+        line-height: 1;
+        letter-spacing: 3px;
+        margin-bottom: 15px;
+        animation: slideUp 1s ease-out 0.2s both;
+      }
+
+      .hero-title span {
+        color: var(--primary);
+      }
+
+      .hero-tagline {
+        font-size: 1.4rem;
+        color: var(--secondary);
+        margin-bottom: 20px;
+        font-weight: 500;
+        animation: slideUp 1s ease-out 0.3s both;
+      }
+
+      .hero-desc {
+        color: var(--muted);
+        font-size: 1.1rem;
+        max-width: 500px;
+        margin-bottom: 30px;
+        line-height: 1.7;
+        animation: slideUp 1s ease-out 0.4s both;
+      }
+
+      .hero-rating {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 35px;
+        animation: slideUp 1s ease-out 0.5s both;
+      }
+
+      .stars {
+        color: var(--secondary);
+        font-size: 1.2rem;
+        letter-spacing: 2px;
+      }
+
+      .rating-text {
+        color: #fff;
+        font-weight: 600;
+      }
+
+      .rating-count {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .hero-buttons {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        animation: slideUp 1s ease-out 0.6s both;
+      }
+
+      .btn {
+        padding: 15px 35px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        border: none;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: #fff;
+      }
+
+      .btn-primary:hover {
+        background: #ff2a4a;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(227, 24, 55, 0.4);
+      }
+
+      .btn-secondary {
+        background: transparent;
+        color: #fff;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .btn-secondary:hover {
+        border-color: var(--secondary);
+        color: var(--secondary);
+        transform: translateY(-3px);
+      }
+
+      .hero-image {
+        position: relative;
+        animation: slideUp 1s ease-out 0.4s both;
+      }
+
+      .hero-image img {
+        width: 100%;
+        max-width: 500px;
+        border-radius: 20px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+      }
+
+      .hero-image-glow {
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(227, 24, 55, 0.3) 0%, transparent 70%);
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: -1;
+        animation: glow 4s ease-in-out infinite;
+      }
+
+      @keyframes glow {
+        0%,
+        100% {
+          opacity: 0.5;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        50% {
+          opacity: 0.8;
+          transform: translate(-50%, -50%) scale(1.1);
+        }
+      }
+
+      /* Menu Section */
+      .menu {
+        padding: 100px 0;
+        background: var(--dark);
+        position: relative;
+      }
+
+      .menu::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .section-header {
+        text-align: center;
+        margin-bottom: 60px;
+      }
+
+      .section-badge {
+        display: inline-block;
+        background: rgba(255, 215, 0, 0.1);
+        border: 1px solid rgba(255, 215, 0, 0.2);
+        padding: 8px 20px;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        color: var(--secondary);
+        margin-bottom: 15px;
+      }
+
+      .section-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        letter-spacing: 2px;
+        margin-bottom: 15px;
+      }
+
+      .section-desc {
+        color: var(--muted);
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      /* Category Tabs */
+      .category-tabs {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 50px;
+        flex-wrap: wrap;
+      }
+
+      .tab-btn {
+        background: var(--card);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 12px 25px;
+        border-radius: 50px;
+        color: #fff;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .tab-btn:hover {
+        border-color: var(--primary);
+        background: rgba(227, 24, 55, 0.1);
+      }
+
+      .tab-btn.active {
+        background: var(--primary);
+        border-color: var(--primary);
+      }
+
+      /* Menu Grid */
+      .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 25px;
+      }
+
+      .menu-item {
+        background: var(--card);
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s;
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      .menu-item.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .menu-item:hover {
+        transform: translateY(-10px);
+        border-color: rgba(227, 24, 55, 0.3);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .menu-item-image {
+        height: 180px;
+        background: linear-gradient(135deg, var(--darker) 0%, var(--card) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 80px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .menu-item-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .menu-item-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: var(--primary);
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .menu-item-content {
+        padding: 20px;
+      }
+
+      .menu-item-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .menu-item-desc {
+        color: var(--muted);
+        font-size: 0.85rem;
+        margin-bottom: 15px;
+      }
+
+      .menu-item-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .menu-item-price {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 1.5rem;
+        color: var(--secondary);
+        letter-spacing: 1px;
+      }
+
+      .add-btn {
+        background: var(--primary);
+        border: none;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        color: #fff;
+        font-size: 1.3rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .add-btn:hover {
+        background: #ff2a4a;
+        transform: scale(1.1) rotate(90deg);
+      }
+
+      /* Cart Sidebar */
+      .cart-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 2000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s;
+      }
+
+      .cart-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .cart-sidebar {
+        position: fixed;
+        top: 0;
+        right: -450px;
+        width: 100%;
+        max-width: 450px;
+        height: 100%;
+        background: var(--dark);
+        z-index: 2001;
+        transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .cart-sidebar.active {
+        right: 0;
+      }
+
+      .cart-header {
+        padding: 25px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .cart-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 1.8rem;
+        letter-spacing: 1px;
+      }
+
+      .close-cart {
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 1.5rem;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+      }
+
+      .close-cart:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .cart-items {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+      }
+
+      .cart-empty {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--muted);
+      }
+
+      .cart-empty-icon {
+        font-size: 60px;
+        margin-bottom: 15px;
+        opacity: 0.5;
+      }
+
+      .cart-item {
+        display: flex;
+        gap: 15px;
+        padding: 15px;
+        background: var(--card);
+        border-radius: 15px;
+        margin-bottom: 15px;
+        animation: slideIn 0.3s ease-out;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .cart-item-image {
+        width: 70px;
+        height: 70px;
+        background: var(--darker);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 35px;
+      }
+
+      .cart-item-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 10px;
+      }
+
+      .cart-item-info {
+        flex: 1;
+      }
+
+      .cart-item-name {
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .cart-item-price {
+        color: var(--secondary);
+        font-weight: 500;
+      }
+
+      .cart-item-qty {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .qty-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        color: #fff;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .qty-btn:hover {
+        background: var(--primary);
+      }
+
+      .cart-item-qty span {
+        font-weight: 600;
+        min-width: 20px;
+        text-align: center;
+      }
+
+      .remove-item {
+        background: none;
+        border: none;
+        color: var(--muted);
+        cursor: pointer;
+        padding: 5px;
+        transition: color 0.3s;
+      }
+
+      .remove-item:hover {
+        color: var(--primary);
+      }
+
+      .cart-footer {
+        padding: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        background: var(--darker);
+      }
+
+      .cart-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .cart-total-label {
+        color: var(--muted);
+        font-size: 1.1rem;
+      }
+
+      .cart-total-price {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 2rem;
+        color: var(--secondary);
+      }
+
+      .checkout-btn {
+        width: 100%;
+        padding: 15px;
+        background: #25d366;
+        border: none;
+        border-radius: 50px;
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .checkout-btn:hover {
+        background: #128c7e;
+        transform: translateY(-2px);
+      }
+
+      /* Contact Section */
+      .contact {
+        padding: 100px 0;
+        background: var(--darker);
+      }
+
+      .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        align-items: start;
+      }
+
+      .contact-info {
+        padding: 40px;
+        background: var(--card);
+        border-radius: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .contact-info h3 {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 2rem;
+        letter-spacing: 1px;
+        margin-bottom: 30px;
+      }
+
+      .contact-item {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 25px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 15px;
+        transition: all 0.3s;
+      }
+
+      .contact-item:hover {
+        background: rgba(227, 24, 55, 0.1);
+        transform: translateX(5px);
+      }
+
+      .contact-icon {
+        width: 50px;
+        height: 50px;
+        background: var(--primary);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        flex-shrink: 0;
+      }
+
+      .contact-text h4 {
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .contact-text p {
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .contact-text a {
+        color: #fff;
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+
+      .contact-text a:hover {
+        color: var(--primary);
+      }
+
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(74, 222, 128, 0.2);
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        color: #4ade80;
+        margin-top: 5px;
+      }
+
+      .status-badge .dot {
+        width: 6px;
+        height: 6px;
+        background: #4ade80;
+        border-radius: 50%;
+      }
+
+      .map-container {
+        border-radius: 25px;
+        overflow: hidden;
+        height: 100%;
+        min-height: 400px;
+      }
+
+      .map-container iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+
+      /* Reviews Section */
+      .reviews {
+        padding: 100px 0;
+        background: var(--dark);
+      }
+
+      .reviews-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+      }
+
+      .review-card {
+        background: var(--card);
+        padding: 35px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s;
+      }
+
+      .review-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(255, 215, 0, 0.2);
+      }
+
+      .review-stars {
+        color: var(--secondary);
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+        letter-spacing: 2px;
+      }
+
+      .review-text {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        margin-bottom: 20px;
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .review-author {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .author-avatar {
+        width: 45px;
+        height: 45px;
+        background: linear-gradient(135deg, var(--primary) 0%, #ff6b6b 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.1rem;
+      }
+
+      .author-name {
+        font-weight: 600;
+      }
+
+      /* Footer */
+      .footer {
+        background: var(--darker);
+        padding: 60px 0 30px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 40px;
+        margin-bottom: 50px;
+      }
+
+      .footer-brand h3 {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 2rem;
+        letter-spacing: 2px;
+        margin-bottom: 15px;
+      }
+
+      .footer-brand h3 span {
+        color: var(--primary);
+      }
+
+      .footer-brand p {
+        color: var(--muted);
+        line-height: 1.7;
+        margin-bottom: 20px;
+      }
+
+      .social-links {
+        display: flex;
+        gap: 12px;
+      }
+
+      .social-link {
+        width: 45px;
+        height: 45px;
+        background: var(--card);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        text-decoration: none;
+        transition: all 0.3s;
+      }
+
+      .social-link:hover {
+        background: var(--primary);
+        transform: translateY(-3px);
+      }
+
+      .footer-column h4 {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 1.3rem;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+      }
+
+      .footer-column ul {
+        list-style: none;
+      }
+
+      .footer-column li {
+        margin-bottom: 12px;
+      }
+
+      .footer-column a {
+        color: var(--muted);
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+
+      .footer-column a:hover {
+        color: var(--primary);
+      }
+
+      .footer-bottom {
+        padding-top: 30px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .footer-bottom p {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .footer-bottom span {
+        color: var(--primary);
+      }
+
+      /* Mobile Menu */
+      .mobile-menu {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: var(--darker);
+        z-index: 999;
+        transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 40px;
+      }
+
+      .mobile-menu.active {
+        left: 0;
+      }
+
+      .mobile-menu a {
+        display: block;
+        color: #fff;
+        text-decoration: none;
+        font-size: 2rem;
+        font-family: "Bebas Neue", sans-serif;
+        letter-spacing: 2px;
+        padding: 15px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transition: color 0.3s;
+      }
+
+      .mobile-menu a:hover {
+        color: var(--primary);
+      }
+
+      .close-mobile {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 2rem;
+        cursor: pointer;
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .hero-container {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+
+        .hero-content {
+          order: 2;
+        }
+
+        .hero-image {
+          order: 1;
+          display: flex;
+          justify-content: center;
+        }
+
+        .hero-desc {
+          margin: 0 auto 30px;
+        }
+
+        .hero-buttons {
+          justify-content: center;
+        }
+
+        .contact-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .footer-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
+
+        .mobile-toggle {
+          display: flex;
+        }
+
+        .hero-title {
+          font-size: 3rem;
+        }
+
+        .category-tabs {
+          gap: 10px;
+        }
+
+        .tab-btn {
+          padding: 10px 18px;
+          font-size: 0.9rem;
+        }
+
+        .reviews-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .footer-grid {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+
+        .social-links {
+          justify-content: center;
+        }
+
+        .footer-bottom {
+          flex-direction: column;
+          text-align: center;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hero-buttons {
+          flex-direction: column;
+        }
+
+        .btn {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .menu-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Reduced Motion */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+
+      /* Toast Notification */
+      .toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: var(--card);
+        padding: 15px 25px;
+        border-radius: 10px;
+        border: 1px solid var(--primary);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 3000;
+        opacity: 0;
+        transition: all 0.3s;
+      }
+
+      .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loading Screen -->
+    <div class="loader" id="loader">
+      <div class="loader-content">
+        <div class="pizza-spinner"></div>
+        <p style="font-family: &quot;Bebas Neue&quot;, sans-serif; font-size: 1.5rem; letter-spacing: 2px">
+          Loading 3C Pizza Time...
+        </p>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+      <div class="nav-container">
+        <a href="#" class="logo">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path>
+            <path d="M12 6v6l4 2"></path>
+          </svg>
+          3C
+          <span>Pizza Time</span>
+        </a>
+        <div class="nav-links">
+          <a href="#home">Home</a>
+          <a href="#menu">Menu</a>
+          <a href="#contact">Contact</a>
+          <a href="#reviews">Reviews</a>
+          <button class="cart-btn" id="cartBtn" aria-label="Open cart">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            Cart
+            <span class="cart-count" id="cartCount">0</span>
+          </button>
+        </div>
+        <div class="mobile-toggle" id="mobileToggle" aria-label="Open menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <button class="close-mobile" id="closeMobile" aria-label="Close menu">×</button>
+      <a href="#home" onclick="closeMobileMenu()">Home</a>
+      <a href="#menu" onclick="closeMobileMenu()">Menu</a>
+      <a href="#contact" onclick="closeMobileMenu()">Contact</a>
+      <a href="#reviews" onclick="closeMobileMenu()">Reviews</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+      <div class="hero-bg"></div>
+      <div class="hero-pattern"></div>
+      <div class="floating-pizza">🍕</div>
+      <div class="floating-pizza">🍕</div>
+      <div class="floating-pizza">🍕</div>
+
+      <div class="hero-container">
+        <div class="hero-content">
+          <div class="hero-badge">
+            <span class="dot"></span>
+            Open Now - Closes 1 AM
+          </div>
+          <h1 class="hero-title">
+            3C
+            <span>Pizza Time</span>
+          </h1>
+          <p class="hero-tagline">Fresh Taste, Fast Delivery</p>
+          <p class="hero-desc">
+            Serving delicious pizzas, burgers, sandwiches &amp; more in Karor Lal Esan. Quality ingredients, authentic
+            taste, delivered hot to your doorstep.
+          </p>
+          <div class="hero-rating">
+            <span class="stars">★★★★☆</span>
+            <span class="rating-text">4.1</span>
+            <span class="rating-count">(21 reviews)</span>
+          </div>
+          <div class="hero-buttons">
+<a href="order.html" class="btn btn-primary">Open Menu</a>
+            <a href="#menu" class="btn btn-primary">View Menu</a>
+            <button class="btn btn-secondary" onclick="openCart()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+              </svg>
+              Order Now
+            </button>
+          </div>
+        </div>
+        <div class="hero-image">
+          <div class="hero-image-glow"></div>
+          <img
+            src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&amp;h=600&amp;fit=crop"
+            alt="Delicious Pizza"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section class="menu" id="menu">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Our Menu</span>
+          <h2 class="section-title">Delicious Food Menu</h2>
+          <p class="section-desc">
+            Fresh ingredients, authentic recipes, and flavors that keep you coming back for more
+          </p>
+        </div>
+
+        <div class="category-tabs">
+          <button class="tab-btn active" data-category="all">All Items</button>
+          <button class="tab-btn" data-category="pizza">Pizzas</button>
+          <button class="tab-btn" data-category="burger">Burgers</button>
+          <button class="tab-btn" data-category="sandwich">Sandwiches</button>
+          <button class="tab-btn" data-category="drink">Drinks</button>
+        </div>
+
+        <div class="menu-grid" id="menuGrid">
+          <!-- Menu items will be rendered here by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Find Us</span>
+          <h2 class="section-title">Contact &amp; Location</h2>
+          <p class="section-desc">Visit us or place your order for fast delivery</p>
+        </div>
+
+        <div class="contact-grid">
+          <div class="contact-info">
+            <h3>Get In Touch</h3>
+
+            <div class="contact-item">
+              <div class="contact-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+              </div>
+              <div class="contact-text">
+                <h4>Address</h4>
+                <p>6XC3+98M, Karor Lal Esan, Pakistan</p>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path
+                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="contact-text">
+                <h4>Phone</h4>
+                <a href="tel:+923091235555">+92 309 1235555</a>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12,6 12,12 16,14"></polyline>
+                </svg>
+              </div>
+              <div class="contact-text">
+                <h4>Working Hours</h4>
+                <p>Open Daily</p>
+                <span class="status-badge">
+                  <span class="dot"></span>
+                  Open - Closes 1 AM
+                </span>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-icon" style="background: #25d366">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="contact-text">
+                <h4>WhatsApp</h4>
+                <a href="https://wa.me/923091235555" target="_blank">Chat with us</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="map-container">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3431.234567890123!2d70.9583!3d31.1500!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzHCsDA5JzAwLjAiTiA3MMKwNTcnMzAuMCJF!5e0!3m2!1sen!2s!4v1234567890"
+              allowfullscreen=""
+              loading="lazy"
+              title="3C Pizza Time Location"
+            ></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="reviews" id="reviews">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Testimonials</span>
+          <h2 class="section-title">What Our Customers Say</h2>
+          <p class="section-desc">Real reviews from our valued customers</p>
+        </div>
+
+        <div class="reviews-grid">
+          <div class="review-card">
+            <div class="review-stars">★★★★★</div>
+            <p class="review-text">
+              "Malai Boti pizza is absolutely delicious! The best pizza I've had in Karor. Fresh ingredients and perfect
+              taste. Highly recommended!"
+            </p>
+            <div class="review-author">
+              <div class="author-avatar">AT</div>
+              <span class="author-name">Arslan Tariq</span>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div class="review-stars">★★★★★</div>
+            <p class="review-text">
+              "Zinger burger better than KFC! Crispy, juicy, and perfectly seasoned. The delivery was super fast and the
+              food was still hot."
+            </p>
+            <div class="review-author">
+              <div class="author-avatar">WS</div>
+              <span class="author-name">Waseem Sajad</span>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div class="review-stars">★★★★☆</div>
+            <p class="review-text">
+              "Great food quality and reasonable prices. The Chicken Tikka Pizza has amazing flavor. Will definitely
+              order again!"
+            </p>
+            <div class="review-author">
+              <div class="author-avatar">MK</div>
+              <span class="author-name">Muhammad Kamran</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <h3>
+              3C
+              <span>Pizza Time</span>
+            </h3>
+            <p>
+              Serving delicious pizzas, burgers, sandwiches &amp; more in Karor Lal Esan. Quality food, fast delivery,
+              and great taste guaranteed.
+            </p>
+            <div class="social-links">
+              <a href="https://facebook.com" target="_blank" class="social-link" aria-label="Facebook">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+                  ></path>
+                </svg>
+              </a>
+              <a href="https://instagram.com" target="_blank" class="social-link" aria-label="Instagram">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"
+                  ></path>
+                </svg>
+              </a>
+              <a href="https://wa.me/923091235555" target="_blank" class="social-link" aria-label="WhatsApp">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"
+                  ></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="footer-column">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="#home">Home</a></li>
+              <li><a href="#menu">Menu</a></li>
+              <li><a href="#contact">Contact</a></li>
+              <li><a href="#reviews">Reviews</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-column">
+            <h4>Menu</h4>
+            <ul>
+              <li><a href="#menu">Pizzas</a></li>
+              <li><a href="#menu">Burgers</a></li>
+              <li><a href="#menu">Sandwiches</a></li>
+              <li><a href="#menu">Drinks</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-column">
+            <h4>Contact</h4>
+            <ul>
+              <li><a href="tel:+923091235555">+92 309 1235555</a></li>
+              <li><a href="https://wa.me/923091235555">WhatsApp</a></li>
+              <li>Karor Lal Esan, Pakistan</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>
+            © 2024
+            <span>3C Pizza Time</span>
+            . All rights reserved.
+          </p>
+          <p>Dine-in &amp; Takeaway Available</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Cart Overlay -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cartSidebar">
+      <div class="cart-header">
+        <h2 class="cart-title">Your Order</h2>
+        <button class="close-cart" id="closeCartBtn" aria-label="Close cart">×</button>
+      </div>
+
+      <div class="cart-items" id="cartItems">
+        <!-- Cart items rendered by JS -->
+      </div>
+
+      <div class="cart-footer">
+        <div class="cart-total">
+          <span class="cart-total-label">Total Amount</span>
+          <span class="cart-total-price" id="cartTotal">Rs. 0</span>
+        </div>
+        <button class="checkout-btn" id="whatsappOrderBtn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          Order on WhatsApp
+        </button>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22,4 12,14.01 9,11.01"></polyline>
+      </svg>
+      <span id="toastMessage">Item added to cart!</span>
+    </div>
+
+    <script>
+      // Menu Data
+      const menuData = [
+        // Pizzas
+        {
+          id: 1,
+          name: "Malai Boti Pizza",
+          price: 850,
+          category: "pizza",
+          desc: "Creamy white sauce with tender boti pieces",
+          image: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop",
+          badge: "Popular",
+        },
+        {
+          id: 2,
+          name: "Chicken Tikka Pizza",
+          price: 900,
+          category: "pizza",
+          desc: "Spicy tikka chunks with onions and peppers",
+          image: "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=400&h=300&fit=crop",
+        },
+        {
+          id: 3,
+          name: "BBQ Pizza",
+          price: 800,
+          category: "pizza",
+          desc: "Smoky BBQ sauce with grilled chicken",
+          image: "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=400&h=300&fit=crop",
+        },
+        {
+          id: 4,
+          name: "Pepperoni Pizza",
+          price: 950,
+          category: "pizza",
+          desc: "Classic pepperoni with mozzarella cheese",
+          image: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400&h=300&fit=crop",
+        },
+        // Burgers
+        {
+          id: 5,
+          name: "Zinger Burger",
+          price: 350,
+          category: "burger",
+          desc: "Crispy fried chicken with special sauce",
+          image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop",
+          badge: "Best Seller",
+        },
+        {
+          id: 6,
+          name: "Chicken Burger",
+          price: 300,
+          category: "burger",
+          desc: "Juicy grilled chicken patty with veggies",
+          image: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=400&h=300&fit=crop",
+        },
+        {
+          id: 7,
+          name: "Beef Burger",
+          price: 400,
+          category: "burger",
+          desc: "Premium beef patty with cheese",
+          image: "https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=400&h=300&fit=crop",
+        },
+        // Sandwiches
+        {
+          id: 8,
+          name: "Chicken Sandwich",
+          price: 250,
+          category: "sandwich",
+          desc: "Grilled chicken with fresh vegetables",
+          image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&h=300&fit=crop",
+        },
+        {
+          id: 9,
+          name: "Club Sandwich",
+          price: 350,
+          category: "sandwich",
+          desc: "Triple decker with chicken and eggs",
+          image: "https://images.unsplash.com/photo-1509722747041-616f39b57569?w=400&h=300&fit=crop",
+        },
+        // Drinks
+        {
+          id: 10,
+          name: "Limca",
+          price: 80,
+          category: "drink",
+          desc: "Refreshing lemon drink",
+          image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400&h=300&fit=crop",
+        },
+        {
+          id: 11,
+          name: "Coca Cola",
+          price: 80,
+          category: "drink",
+          desc: "Classic cola refreshment",
+          image: "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&h=300&fit=crop",
+        },
+        {
+          id: 12,
+          name: "Fresh Juice",
+          price: 120,
+          category: "drink",
+          desc: "Freshly squeezed seasonal juice",
+          image: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&h=300&fit=crop",
+        },
+      ];
+
+      // State
+      let cart = [];
+
+      // DOM Elements
+      const loader = document.getElementById("loader");
+      const nav = document.getElementById("nav");
+      const mobileToggle = document.getElementById("mobileToggle");
+      const mobileMenu = document.getElementById("mobileMenu");
+      const closeMobileBtn = document.getElementById("closeMobile");
+      const cartBtn = document.getElementById("cartBtn");
+      const cartOverlay = document.getElementById("cartOverlay");
+      const cartSidebar = document.getElementById("cartSidebar");
+      const closeCartBtn = document.getElementById("closeCartBtn");
+      const cartItemsContainer = document.getElementById("cartItems");
+      const cartCountEl = document.getElementById("cartCount");
+      const cartTotalEl = document.getElementById("cartTotal");
+      const checkoutBtn = document.getElementById("checkoutBtn");
+      const toast = document.getElementById("toast");
+      const toastMessage = document.getElementById("toastMessage");
+      const menuGrid = document.getElementById("menuGrid");
+      const tabBtns = document.querySelectorAll(".tab-btn");
+      const whatsappOrderBtn = document.getElementById("whatsappOrderBtn");
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", init);
+
+      function init() {
+        // Hide loader
+        setTimeout(() => {
+          loader.classList.add("hidden");
+        }, 1500);
+
+        // Render menu
+        renderMenu("all");
+
+        // Event Listeners
+        setupEventListeners();
+      }
+
+      function setupEventListeners() {
+        // Scroll
+        window.addEventListener("scroll", () => {
+          if (window.scrollY > 50) {
+            nav.classList.add("scrolled");
+          } else {
+            nav.classList.remove("scrolled");
+          }
+        });
+
+        // Mobile Menu
+        mobileToggle.addEventListener("click", () => mobileMenu.classList.add("active"));
+        closeMobileBtn.addEventListener("click", closeMobileMenu);
+
+        // Cart
+        cartBtn.addEventListener("click", openCart);
+        cartOverlay.addEventListener("click", closeCart);
+        closeCartBtn.addEventListener("click", closeCart);
+
+        // Category Tabs
+        tabBtns.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            tabBtns.forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            renderMenu(btn.dataset.category);
+          });
+        });
+
+        // WhatsApp Order Button
+        whatsappOrderBtn.addEventListener("click", sendWhatsAppOrder);
+      }
+
+      function closeMobileMenu() {
+        mobileMenu.classList.remove("active");
+      }
+
+      function openCart() {
+        cartOverlay.classList.add("active");
+        cartSidebar.classList.add("active");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeCart() {
+        cartOverlay.classList.remove("active");
+        cartSidebar.classList.remove("active");
+        document.body.style.overflow = "";
+      }
+
+      function renderMenu(category) {
+        const items = category === "all" ? menuData : menuData.filter((item) => item.category === category);
+
+        menuGrid.innerHTML = items
+          .map(
+            (item, index) => `
+                <div class="menu-item" style="transition-delay: ${index * 0.1}s">
+                    <div class="menu-item-image">
+                        <img src="${item.image}" alt="${item.name}" loading="lazy">
+                        ${item.badge ? `<span class="menu-item-badge">${item.badge}</span>` : ""}
+                    </div>
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-name">${item.name}</h3>
+                        <p class="menu-item-desc">${item.desc}</p>
+                        <div class="menu-item-footer">
+                            <span class="menu-item-price">Rs. ${item.price}</span>
+                            <button class="add-btn" onclick="addToCart(${item.id})" aria-label="Add ${item.name} to cart">+</button>
+                        </div>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+
+        // Trigger animation
+        setTimeout(() => {
+          document.querySelectorAll(".menu-item").forEach((item) => {
+            item.classList.add("visible");
+          });
+        }, 50);
+      }
+
+      function addToCart(id) {
+        const item = menuData.find((i) => i.id === id);
+        if (!item) return;
+
+        const existingItem = cart.find((i) => i.id === id);
+        if (existingItem) {
+          existingItem.quantity++;
+        } else {
+          cart.push({ ...item, quantity: 1 });
+        }
+
+        updateCart();
+        showToast(`${item.name} added to cart!`);
+      }
+
+      function removeFromCart(id) {
+        cart = cart.filter((item) => item.id !== id);
+        updateCart();
+      }
+
+      function updateQuantity(id, change) {
+        const item = cart.find((i) => i.id === id);
+        if (item) {
+          item.quantity += change;
+          if (item.quantity <= 0) {
+            removeFromCart(id);
+          } else {
+            updateCart();
+          }
+        }
+      }
+
+      function updateCart() {
+        // Update count
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        cartCountEl.textContent = totalItems;
+
+        // Update total
+        const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        cartTotalEl.textContent = `Rs. ${total}`;
+
+        // Update cart items display
+        if (cart.length === 0) {
+          cartItemsContainer.innerHTML = `
+                    <div class="cart-empty">
+                        <div class="cart-empty-icon">🛒</div>
+                        <p>Your cart is empty</p>
+                    </div>
+                `;
+        } else {
+          cartItemsContainer.innerHTML = cart
+            .map(
+              (item) => `
+                    <div class="cart-item">
+                        <div class="cart-item-image">
+                            <img src="${item.image}" alt="${item.name}">
+                        </div>
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-price">Rs. ${item.price}</div>
+                            <div class="cart-item-qty">
+                                <button class="qty-btn" onclick="updateQuantity(${item.id}, -1)" aria-label="Decrease quantity">-</button>
+                                <span>${item.quantity}</span>
+                                <button class="qty-btn" onclick="updateQuantity(${item.id}, 1)" aria-label="Increase quantity">+</button>
+                            </div>
+                        </div>
+                        <button class="remove-item" onclick="removeFromCart(${item.id})" aria-label="Remove ${item.name}">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3,6 5,6 21,6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </button>
+                    </div>
+                `
+            )
+            .join("");
+        }
+      }
+
+      function showToast(message) {
+        toastMessage.textContent = message;
+        toast.classList.add("show");
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+
+      function sendWhatsAppOrder() {
+        if (cart.length === 0) {
+          showToast("Your cart is empty!");
+          return;
+        }
+
+        let message = "Hello 3C Pizza Time! I would like to order:%0A%0A";
+        let total = 0;
+
+        cart.forEach((item) => {
+          const itemTotal = item.price * item.quantity;
+          total += itemTotal;
+          message += `• ${item.name} x ${item.quantity} = Rs. ${itemTotal}%0A`;
+        });
+
+        message += `%0A*Total Amount: Rs. ${total}*%0A%0A`;
+        message += "Please confirm my order. Thank you!";
+
+        // Replace with the actual phone number
+        const phoneNumber = "923091235555";
+        const url = `https://wa.me/${phoneNumber}?text=${message}`;
+
+        window.open(url, "_blank");
+      }
+
+      // Keyboard navigation
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closeCart();
+          closeMobileMenu();
+        }
+      });
+    </script>
+  </body>
+</html>
